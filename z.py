@@ -1,3 +1,2 @@
-a = {"a":[[1,2,3],[9,9,9],3,34,4]}
-print(a["a"][0][1])
-
+with open("TOKEN", 'r') as t:
+    print(t.read())
