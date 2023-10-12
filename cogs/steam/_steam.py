@@ -1,9 +1,9 @@
 import sqlite3, json, requests, csv
 
 def steam_data():
-    connection = sqlite3.connect("steam.db")
-    db = connection.cursor()
-    db.execute("CREATE TABLE IF NOT EXISTS steam_data(appid INT, name TEXT)")
+    # connection = sqlite3.connect("steam.db")
+    # db = connection.cursor()
+    # db.execute("CREATE TABLE IF NOT EXISTS steam_data(appid INT, name TEXT)")
 
     applist = "http://api.steampowered.com/ISteamApps/GetAppList/v0002"
     response = requests.get(applist)
@@ -17,14 +17,15 @@ def steam_data():
                 tp = (k["name"], k["appid"])
                 x.append(tp)
                 d.append({"name": k["name"], "appid": k["appid"]})
-    with open('file.csv', 'w', newline='') as file: 
+    with open('file.csv', 'w', encoding = 'utf-8', newline='') as file: 
         fields = ["name", "appid"]
         writer = csv.DictWriter(file, fieldnames = fields)
         writer.writerows(d)
-    db.execute("DELETE FROM steam_data")
-    db.executemany("INSERT INTO steam_data VALUES (?, ?)", x)
-    connection.commit()
-    db.close()
+
+    # db.execute("DELETE FROM steam_data")
+    # db.executemany("INSERT INTO steam_data VALUES (?, ?)", x)
+    # connection.commit()
+    # db.close()
     print("ID updated!")
     
 steam_data()

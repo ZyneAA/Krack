@@ -47,7 +47,7 @@ class MyButton(discord.ui.View):
             for i in data[self.id]["data"]["genres"]:
                 a.append(i["description"])
             formatted_genre = "❖".join(a)
-            embed.add_field(name = "✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢", value = " ", inline = False)
+            embed.add_field(name = "✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢", value = " ", inline = False)
             embed.add_field(name = formatted_genre, value = " ", inline = False)
             await interaction.response.send_message(embed = embed)
             
@@ -59,21 +59,23 @@ class MyButton(discord.ui.View):
 async def steam(ctx, *, name):      
     sar = str(name).upper()
     print(sar)
-    with open('file.csv', "r") as f:
+    with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
         for row in csvreader:
             upper = row[0].upper()
             # Search and match the names from database
             if sar in upper:
+                await ctx.send("Found")
                 view = MyButton(row[0], row[1], "US")
                 embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
                 await ctx.send(embed = embed, view = view)  
   
 #------------------------------------------------------
-async def load():
+async def load():      
     for fname in os.listdir("./cogs"):
         if fname.endswith(".py") and not fname.startswith("_"):
             await client.load_extension(f"cogs.{fname[:-3]}")
         
 asyncio.run(load())
-client.run("MTA3NTA5MDM0MDE2NTQ2NDE2NA.G1jfgC.D1t6TPCQM_WnuPDD10RV-kILdZ8xmQ7dMhQWug")
+with open("TOKEN", "r") as token:
+        client.run(token.read())
