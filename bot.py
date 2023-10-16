@@ -63,9 +63,9 @@ async def steam(ctx, *, name):
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
         for row in csvreader:
-            upper = row[0].upper()
+            list = row[0]
             # Search and match the names from database
-            if sar in upper:
+            if sar in list:
                 await ctx.send("Found")
                 view = MyButton(row[0], row[1], "US")
                 embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  

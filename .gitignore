@@ -1,7 +1,11 @@
 __pycache__/
 *.csv
 *.mp3
+<<<<<<< HEAD
+venv/
+=======
 *.json
 *.db
 venv/
 TOKEN
+>>>>>>> 118de7cde83fc4e416108d5ff7c38c2f456545b6
