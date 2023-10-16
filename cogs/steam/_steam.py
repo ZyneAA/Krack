@@ -27,4 +27,3 @@ def steam_data():
     # connection.commit()
     # db.close()
     print("ID updated!")
-    
