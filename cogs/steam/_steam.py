@@ -1,4 +1,4 @@
-import sqlite3, json, requests, csv
+import sqlite3, json, requests, csv, asyncio
 
 def steam_data():
     # connection = sqlite3.connect("steam.db")
@@ -16,7 +16,7 @@ def steam_data():
             for k in lol[j]:
                 tp = (k["name"], k["appid"])
                 x.append(tp)
-                d.append({"name": k["name"], "appid": k["appid"]})
+                d.append({"name": k["name"].upper(), "appid": k["appid"]})
     with open('file.csv', 'w', encoding = 'utf-8', newline='') as file: 
         fields = ["name", "appid"]
         writer = csv.DictWriter(file, fieldnames = fields)
@@ -27,5 +27,3 @@ def steam_data():
     # connection.commit()
     # db.close()
     print("ID updated!")
-    
-steam_data()
