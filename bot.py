@@ -79,5 +79,7 @@ async def load():
         
 asyncio.run(load())
 _steam.steam_data()
+print("Ko Kit dick sar")
+_steam.steam_data()
 with open("TOKEN", "r") as token:
         client.run(token.read())

@@ -1,4 +1,4 @@
-import sqlite3, json, requests, csv
+import sqlite3, json, requests, csv, asyncio
 
 def steam_data():
     # connection = sqlite3.connect("steam.db")
