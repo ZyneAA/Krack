@@ -2,6 +2,7 @@ import os, asyncio, discord, json, requests, sqlite3, csv, re
 from discord.ext import commands
 from discord.ui import Button
 import yt_dlp as youtube_dl
+from cogs.steam import _steam
 
 client = commands.Bot(command_prefix = "$", intents = discord.Intents.all())
 queues = {}
@@ -62,9 +63,9 @@ async def steam(ctx, *, name):
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
         for row in csvreader:
-            upper = row[0].upper()
+            list = row[0]
             # Search and match the names from database
-            if sar in upper:
+            if sar in list:
                 await ctx.send("Found")
                 view = MyButton(row[0], row[1], "US")
                 embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
@@ -77,5 +78,6 @@ async def load():
             await client.load_extension(f"cogs.{fname[:-3]}")
         
 asyncio.run(load())
+_steam.steam_data()
 with open("TOKEN", "r") as token:
         client.run(token.read())
