@@ -2,6 +2,7 @@ import os, asyncio, discord, json, requests, sqlite3, csv, re
 from discord.ext import commands
 from discord.ui import Button
 import yt_dlp as youtube_dl
+from cogs.steam import _steam
 
 client = commands.Bot(command_prefix = "$", intents = discord.Intents.all())
 queues = {}
@@ -77,5 +78,6 @@ async def load():
             await client.load_extension(f"cogs.{fname[:-3]}")
         
 asyncio.run(load())
+_steam.steam_data()
 with open("TOKEN", "r") as token:
         client.run(token.read())
