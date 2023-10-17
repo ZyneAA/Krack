@@ -65,15 +65,18 @@ async def steam(ctx, *, name = ''):
     print(sar)
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
+        count = 0
         for row in csvreader:
             list = row[0]
             # Search and match the names from database
             if sar in list:
                 await ctx.send("-- Found --")
+                count += 1
                 view = MyButton(row[0], row[1], "US")
                 embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
-                await ctx.send(embed = embed, view = view) 
-                
+                await ctx.send(embed = embed, view = view)
+        if count == 0 :
+            await ctx.send("-- Not Found --")            
 #------------------------------------------------------
 async def load():      
     for fname in os.listdir("./cogs"):
