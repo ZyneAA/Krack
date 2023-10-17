@@ -73,10 +73,7 @@ async def steam(ctx, *, name = ''):
                 view = MyButton(row[0], row[1], "US")
                 embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
                 await ctx.send(embed = embed, view = view) 
-            else:
-                await ctx.send("-- Not Found --")
-                return
-  
+                
 #------------------------------------------------------
 async def load():      
     for fname in os.listdir("./cogs"):
