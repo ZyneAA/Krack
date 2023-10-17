@@ -1,4 +1,4 @@
-import os, asyncio, discord, json, requests, sqlite3, csv, re
+import os, asyncio, discord, json, requests, sqlite3, csv, re, ffmpy
 from discord import opus
 from discord.ext import commands, tasks
 from discord.utils import get
@@ -77,11 +77,17 @@ class Yt_Player(commands.Cog):
     
     @commands.command()
     async def play_now(self, ctx, *, url):  
+        if not(ctx.voice_client):
+            await ctx.send("🐙Not in a voice channel🐙") 
+            exit
         voice = ctx.voice_client
         YDL_OPTIONS = self.connfig(ctx.guild.id)  
         if "list" in url:
-            await ctx.send("This command can't play a playlist.")   
+            await ctx.send("🐙This command can't play a playlist.🐙")  
+            exit 
         with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+            info = ydl.extract_info(url, download=False)["title"]
+            await ctx.send(f"🐙Now loading '{info}'. Please wait a moment🐙")
             ydl.download([url])
             source = discord.FFmpegOpusAudio(f"./play_now/{ctx.guild.id}.mp3")
             voice.play(source)
@@ -92,7 +98,7 @@ class Yt_Player(commands.Cog):
         if "list" in url:
             await ctx.send("This command is for queuing songs, not for a playlist.")     
         if "https://www.youtube.com/watch?v=" not in url:
-            await ctx.send("Must be a valid link from YouTube")     
+            await ctx.send("🐙Must be a valid link from YouTube🐙")     
         server_id = ctx.guild.id  
         if not server_id in self.queues:
             self.queues[server_id] = []
@@ -104,30 +110,28 @@ class Yt_Player(commands.Cog):
     @commands.command()
     async def join(self, ctx, *, name):    
         voice_channel = discord.utils.get(ctx.guild.channels, name = name)
-        # self.voice_sever_id = voice_channel.id
-        # self.sever_name = voice_channel
-        voice = await voice_channel.connect()  
-        print(voice)  
-        await ctx.send(f"The bot has joined to {voice_channel}: {voice_channel.id}.")
+        voice = await voice_channel.connect() 
+        print(voice_channel.id)  
+        await ctx.send(f"🐙The bot has joined to {voice_channel} : {voice_channel.id}🐙")
         
     @commands.command()
     async def leave(self, ctx):  
         voice = ctx.voice_client
         await voice.disconnect()
-        await ctx.send(f"🫡The bot has disconnected.")
+        await ctx.send(f"🐙The bot has disconnected🐙")
         
     @commands.command()
     async def stop(self, ctx):
         voice = ctx.voice_client
         if not voice.is_playing():
-            await ctx.send("Not song is playing.")
+            await ctx.send("🐙No song is playing🐙")
         voice.stop()
         
     @commands.command()
     async def pause(self, ctx):
         voice = ctx.voice_client
         if not voice.is_playing():
-            await ctx.send("Not song is playing.")
+            await ctx.send("🐙Not song is playing.🐙")
         voice.pause()
 
 async def setup(client):

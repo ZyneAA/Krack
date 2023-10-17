@@ -78,8 +78,6 @@ async def load():
             await client.load_extension(f"cogs.{fname[:-3]}")
         
 asyncio.run(load())
-_steam.steam_data()
-print("Pi toe gay")
-_steam.steam_data()
+# _steam.steam_data()
 with open("TOKEN", "r") as token:
         client.run(token.read())
