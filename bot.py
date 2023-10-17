@@ -57,7 +57,10 @@ class MyButton(discord.ui.View):
             await interaction.response.send_message(embed = embed)
             
 @client.command()
-async def steam(ctx, *, name):      
+async def steam(ctx, *, name = ''):
+    if name == "":
+        await ctx.send("Please Write '$stream name'")
+        return      
     sar = str(name).upper()
     print(sar)
     with open('file.csv', "r", encoding = 'utf-8') as f:
@@ -69,7 +72,7 @@ async def steam(ctx, *, name):
                 await ctx.send("Found")
                 view = MyButton(row[0], row[1], "US")
                 embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
-                await ctx.send(embed = embed, view = view)  
+                await ctx.send(embed = embed, view = view) 
   
 #------------------------------------------------------
 async def load():      
