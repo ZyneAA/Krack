@@ -3,6 +3,7 @@ __pycache__/
 *.mp3
 *.json
 *.db
+.DS_Store
 venv/
 TOKEN
 play_now/
