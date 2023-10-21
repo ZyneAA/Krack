@@ -1,2 +1,5 @@
-with open("TOKEN", 'r') as t:
-    print(t.read())
+a = {}
+ 
+a["p"] = []
+
+print(a)

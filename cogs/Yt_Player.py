@@ -6,7 +6,7 @@ import yt_dlp as youtube_dl
 
 class Yt_Player(commands.Cog):   
     
-    queues = {}                
+    queues = {}              
     
     def __inint__(self, client):
         self.client = client
@@ -27,12 +27,12 @@ class Yt_Player(commands.Cog):
                     } 
         return OPTIONS
     
-    def play_next(self, ctx):
+    def play_next(self, ctx, next_one):
         print("now inside play_next function")
         voice = ctx.voice_client
         server_id = ctx.guild.id
         if len(self.queues[server_id]) > 0:
-            song = self.queues[server_id][0]
+            song = next_one
             YDL_OPTIONS = {'format': 'bestaudio/best', 
                             'postprocessors': [{
                                     'key': 'FFmpegExtractAudio',
@@ -51,14 +51,14 @@ class Yt_Player(commands.Cog):
             return
     
     @commands.command()
-    async def play(self, ctx):
+    async def play_queue(self, ctx, arg = queues):
         voice = ctx.voice_client
         server_id = ctx.guild.id
         if voice.is_playing():
             await ctx.send("Song's already playing stop the song first.")
         if server_id not in self.queues:
-            await ctx.send("There's no song in the queue") 
-        song = self.queues[server_id][0]
+            await ctx.send("There's no song in the queue. First add some song first.") 
+        song = arg[server_id][0]
         YDL_OPTIONS = {'format': 'bestaudio/best', 
                             'postprocessors': [{
                                     'key': 'FFmpegExtractAudio',
@@ -67,16 +67,16 @@ class Yt_Player(commands.Cog):
                                 }],
                             'outtmpl': f"./queue/{server_id}/" + 'song',
                     } 
-        await ctx.send("Now playing: "+ song[1])
-        if len(self.queues[server_id]) > 0:
-            with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-                ydl.download([f"https://www.youtube.com/watch?v={song[0]}"])
-                source = discord.FFmpegOpusAudio(f"./queue/{server_id}/song.mp3")
-                self.queues[server_id].pop(0)
-                voice.play(source, after = lambda e: self.play_next())
+        # await ctx.send("Now playing: "+ song[0])
+        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+            ydl.download(song)
+            source = discord.FFmpegOpusAudio(f"./queue/{server_id}/song.mp3")
+            self.queues[server_id].pop(0)
+            voice.play(source)
+            self.play_next(self.queues[server_id][1])
     
     @commands.command()
-    async def play_now(self, ctx, *, url):  
+    async def play_now(self, ctx, *, url = 'https://www.youtube.com/watch?v=zSwcTiurwwk'):  
         if not(ctx.voice_client):
             await ctx.send("🐙Not in a voice channel🐙") 
             exit
@@ -90,22 +90,38 @@ class Yt_Player(commands.Cog):
             await ctx.send(f"🐙Now loading '{info}'. Please wait a moment🐙")
             ydl.download([url])
             source = discord.FFmpegOpusAudio(f"./play_now/{ctx.guild.id}.mp3")
-            voice.play(source)
+            voice.play(source) 
     
     @commands.command()
     async def queue(self, ctx, *, url):   
-        YDL_OPTIONS = {'format': 'bestaudio/best'} 
-        if "list" in url:
-            await ctx.send("This command is for queuing songs, not for a playlist.")     
-        if "https://www.youtube.com/watch?v=" not in url:
-            await ctx.send("🐙Must be a valid link from YouTube🐙")     
         server_id = ctx.guild.id  
         if not server_id in self.queues:
             self.queues[server_id] = []
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download = False)
-            self.queues[server_id].append([info.get("id", None), info.get("title", None)])
-            await ctx.send(self.queues[server_id])   
+            self.queues[server_id].append(url)
+            await ctx.send("Added to the queue!")  
+            return
+        self.queues[server_id].append(url)
+        await ctx.send("Added to the queue!")   
+    
+    @commands.command()
+    async def clear_queue(self, ctx):   
+        server_id = ctx.guild.id  
+        if not server_id in self.queues:
+            await ctx.send("There is no song in the queue!")
+        del self.queues[server_id]
+        await ctx.send("Cleared queue!")  
+    
+
+    @commands.command()
+    async def show_queue(self, ctx):  
+        count = 0
+        YDL_OPTIONS = {'format': 'bestaudio/best'}
+        server_id = ctx.guild.id   
+        for i in self.queues[server_id]:
+            count += 1
+            with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+                info = ydl.extract_info(i, download = False)
+                await ctx.send(f"{count}.{info.get('title', None)}")
                  
     @commands.command()
     async def join(self, ctx, *, name):    
@@ -142,3 +158,18 @@ async def setup(client):
             # url = info["formats"][0]['url']
             # with open("lol.json", "w") as f:
             #     json.dump(info, f, indent = 4)
+
+
+# show info
+# YDL_OPTIONS = {'format': 'bestaudio/best'} 
+#         if "list" in url:
+#             await ctx.send("This command is for queuing songs, not for a playlist.")     
+#         if "https://www.youtube.com/watch?v=" not in url:
+#             await ctx.send("🐙Must be a valid link from YouTube🐙")     
+#         server_id = ctx.guild.id  
+#         if not server_id in self.queues:
+#             self.queues[server_id] = []
+#         with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
+#             info = ydl.extract_info(url, download = False)
+#             self.queues[server_id].append([info.get("id", None), info.get("title", None)])
+#             await ctx.send(self.queues[server_id])  
