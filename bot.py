@@ -4,7 +4,7 @@ from discord.ui import Button
 import yt_dlp as youtube_dl
 from cogs.steam import _steam
 
-client = commands.Bot(command_prefix = "$", intents = discord.Intents.all())
+client = commands.Bot(command_prefix = ">", intents = discord.Intents.all())
 queues = {}
 
 @client.event
