@@ -70,11 +70,13 @@ async def steam(ctx, *, name = ''):
             list = row[0]
             # Search and match the names from database
             if sar in list:
-                await ctx.send("-- Found --")
-                count += 1
-                view = MyButton(row[0], row[1], "US")
-                embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
-                await ctx.send(embed = embed, view = view)
+                if (sar[0] == list[0]):
+                    await ctx.send("-- Found --")
+                    count += 1
+                    view = MyButton(row[0], row[1], "US")
+                    embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
+                    await ctx.send(embed = embed, view = view)
+        await ctx.send("-- That is all --")
         if count == 0 :
             await ctx.send("-- Not Found --")            
 #------------------------------------------------------
