@@ -62,22 +62,24 @@ async def steam(ctx, *, name = ''):
         await ctx.send("Please Write '$stream name'")
         return      
     sar = str(name).upper()
+    matching_games = []
     print(sar)
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
-        count = 0
         for row in csvreader:
             list = row[0]
+            pattern = fr'^{re.escape(sar)}'
             # Search and match the names from database
-            if sar in list:
-                if (sar[0] == list[0]):
-                    await ctx.send("-- Found --")
-                    count += 1
-                    view = MyButton(row[0], row[1], "US")
-                    embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
-                    await ctx.send(embed = embed, view = view)
-        await ctx.send("-- That is all --")
-        if count == 0 :
+            if re.search(pattern,list,re.I):
+                matching_games.append(list)
+    if matching_games:
+            await ctx.send("--Found Games--") 
+            for game in matching_games:       
+                view = MyButton(row[0], row[1], "US")
+                embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
+                await ctx.send(embed = embed, view = view)
+            await ctx.send("-- That Is All --")
+    else: 
             await ctx.send("-- Not Found --")            
 #------------------------------------------------------
 async def load():      
