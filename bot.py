@@ -63,19 +63,24 @@ async def steam(ctx, *, name = ''):
         return      
     sar = str(name).upper()
     matching_games = []
+    matching_id = []
     print(sar)
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
         for row in csvreader:
             list = row[0]
+            serial = row[1]
             pattern = fr'^{re.escape(sar)}'
             # Search and match the names from database
             if re.search(pattern,list,re.I):
                 matching_games.append(list)
+                matching_id.append(serial)
     if matching_games:
+            for serial in matching_id:
+                 serials = serial
             await ctx.send("--Found Games--") 
             for game in matching_games:       
-                view = MyButton(row[0], row[1], "US")
+                view = MyButton(game, serials, "US")
                 embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
                 await ctx.send(embed = embed, view = view)
             await ctx.send("-- That Is All --")
