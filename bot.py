@@ -59,7 +59,7 @@ class MyButton(discord.ui.View):
 @client.command()
 async def steam(ctx, *, name = ''):
     if name == "":
-        await ctx.send("Please Write '$stream name'")
+        await ctx.send("Please Write '$stream game_name'")
         return      
     sar = str(name).upper()
     matching_games = []
@@ -78,13 +78,11 @@ async def steam(ctx, *, name = ''):
                      matching_id.append(serial)
 
     if matching_games:
-            for serial in matching_id:
-                 serials = serial
             await ctx.send("--Found Games--") 
             for game in matching_games:       
-                view = MyButton(game, serials, "US")
+                view = MyButton(game, row[1],"US")
                 embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
-                await ctx.send(embed = embed, view = view)
+                await ctx.send( embed = embed , view = view)
             await ctx.send("-- That Is All --")
     else: 
             await ctx.send("-- Not Found --")            
