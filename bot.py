@@ -59,23 +59,32 @@ class MyButton(discord.ui.View):
 @client.command()
 async def steam(ctx, *, name = ''):
     if name == "":
-        await ctx.send("Please Write '$stream name'")
+        await ctx.send("Please Write '$stream game_name'")
         return      
     sar = str(name).upper()
+    matching_games = []
+    except_terms = ['bundle', 'extension', 'non-game-term']
+    matching_id = []
     print(sar)
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
-        count = 0
         for row in csvreader:
-            list = row[0]
-            # Search and match the names from database
-            if sar in list:
-                await ctx.send("-- Found --")
-                count += 1
-                view = MyButton(row[0], row[1], "US")
-                embed = discord.Embed(title = row[0], description = "Click the button below to get the detail!")  
-                await ctx.send(embed = embed, view = view)
-        if count == 0 :
+            list = row[0].strip()
+            serial = row[1]
+            is_game = re.match(r'^[A-Za-z0-9\s-]+$', list) and not any(term in list.lower() for term in except_terms)
+            # Search and match the names from database 
+            if is_game and  list.startswith(sar):
+                     matching_games.append(list)
+                     matching_id.append(serial)
+
+    if matching_games:
+            await ctx.send("--Found Games--") 
+            for game in matching_games:       
+                view = MyButton(game, row[1],"US")
+                embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
+                await ctx.send( embed = embed , view = view)
+            await ctx.send("-- That Is All --")
+    else: 
             await ctx.send("-- Not Found --")            
 #------------------------------------------------------
 async def load():      
