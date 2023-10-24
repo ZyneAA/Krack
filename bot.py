@@ -63,18 +63,20 @@ async def steam(ctx, *, name = ''):
         return      
     sar = str(name).upper()
     matching_games = []
+    except_terms = ['bundle', 'extension', 'non-game-term']
     matching_id = []
     print(sar)
     with open('file.csv', "r", encoding = 'utf-8') as f:
         csvreader = csv.reader(f)
         for row in csvreader:
-            list = row[0]
+            list = row[0].strip()
             serial = row[1]
-            pattern = fr'^{re.escape(sar)}'
-            # Search and match the names from database
-            if re.search(pattern,list,re.I):
-                matching_games.append(list)
-                matching_id.append(serial)
+            is_game = re.match(r'^[A-Za-z0-9\s-]+$', list) and not any(term in list.lower() for term in except_terms)
+            # Search and match the names from database 
+            if is_game and  list.startswith(sar):
+                     matching_games.append(list)
+                     matching_id.append(serial)
+
     if matching_games:
             for serial in matching_id:
                  serials = serial
