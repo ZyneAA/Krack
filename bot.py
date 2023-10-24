@@ -80,10 +80,10 @@ async def steam(ctx, *, name = ''):
 #------------------------------------------------------
 async def load():      
     for fname in os.listdir("./cogs"):
-        if fname.endswith(".py") and not fname.startswith("_"):
+        if fname.endswith(".py") and not fname.startswith("_") and not fname[0].islower():
             await client.load_extension(f"cogs.{fname[:-3]}")
         
 asyncio.run(load())
-# _steam.steam_data()
+# _steam.steam_data() # To update the steam data base
 with open("TOKEN", "r") as token:
         client.run(token.read())
