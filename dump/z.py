@@ -1,5 +1,11 @@
-a = {}
- 
-a["p"] = []
+from collections import deque
 
-print(a)
+z = deque()
+
+z.append(121)
+
+z.append(12)
+
+z.pop()
+
+print(z)
