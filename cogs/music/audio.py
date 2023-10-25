@@ -54,7 +54,7 @@ class Audio:
 
                 # ydl.download(i.url)
                 # source = discord.FFmpegOpusAudio(f"./queue/{self.id}/song.mp3")
-                
+    
                 source = discord.FFmpegPCMAudio(url)
                 self.voice.play(source)
                 await asyncio.sleep(float(duration))
