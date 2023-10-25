@@ -5,7 +5,7 @@ from discord.utils import get
 import yt_dlp as youtube_dl
 
 from cogs.music.queue import Play_List 
-from cogs.music import utility, music_embed
+from cogs.music import utility, music_embed, audio
 
 class Yt_Player(commands.Cog):   
     
@@ -76,7 +76,14 @@ class Yt_Player(commands.Cog):
     #         source = discord.FFmpegOpusAudio(f"./queue/{server_id}/song.mp3")
     #         self.queues[server_id].pop(0)
     #         voice.play(source, after = lambda e: self.next_song(e))
-    
+
+    @commands.command()
+    async def play(self, ctx):
+        voice = ctx.voice_client
+        server_id = ctx.guild
+        utility.QUEUES[server_id].voice = voice
+        await utility.QUEUES[server_id].plaow()
+
     @commands.command()
     async def play_now(self, ctx, *, url = 'https://www.youtube.com/watch?v=zSwcTiurwwk'):  
         if not(ctx.voice_client):
@@ -88,44 +95,45 @@ class Yt_Player(commands.Cog):
             await ctx.send("🐙This command can't play a playlist.🐙")  
             exit 
         with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)["title"]
-            await ctx.send(f"🐙Now loading '{info}'. Please wait a moment🐙")
-            ydl.download([url])
-            source = discord.FFmpegOpusAudio(f"./play_now/{ctx.guild.id}.mp3")
+            info = ydl.extract_info(url, download=False)
+            url = info['url']
+            await ctx.send(f"🐙Now loading. Please wait a moment🐙")
+            source = discord.FFmpegPCMAudio(url)
             voice.play(source) 
     
     @commands.command()
     async def queue(self, ctx, *, url):   
-        server_id = ctx.guild.id  
-        if not server_id in utility.QUEUES:
-            queue = Play_List() 
-            queue.add(url)
-            utility.QUEUES[server_id] = queue
+        server_id = ctx.guild 
+        print(utility.QUEUES[server_id])
+        # await ctx.channel.purge(limit = 1) # No need for this line
+        if  utility.QUEUES[server_id].queue == None :
+            play_list = Play_List() 
+            play_list.add(url)
+            utility.QUEUES[server_id].queue = play_list
         else:
-            utility.QUEUES[server_id].add(url)
+            utility.QUEUES[server_id].queue.add(url)
         await ctx.send("Added to the queue!")   
     
     @commands.command()
     async def clear_queue(self, ctx):   
         server_id = ctx.guild.id  
-        if not server_id in self.queues:
+        if not server_id in utility.QUEUES:
             await ctx.send("There is no song in the queue!")
-        del self.queues[server_id]
-        await ctx.send("Cleared queue!")  
+            return
+        del utility.QUEUES[server_id]
+        await ctx.send("Queue cleared!")  
     
 
     @commands.command()
     async def show_queue(self, ctx):  
-        server_id = ctx.guild.id   
-        for i in utility.QUEUES[server_id].play_list:
-            embed = music_embed.Button(i)
-            await ctx.send(embed = embed.jalan())
+        server_id = ctx.guild  
+        for i in utility.QUEUES[server_id].queue.play_list:
+            await ctx.send(embed = i.song_info)
                  
     @commands.command()
     async def join(self, ctx, *, name):    
         voice_channel = discord.utils.get(ctx.guild.channels, name = name)
         voice = await voice_channel.connect() 
-        print(voice_channel.id)  
         await ctx.send(f"🐙The bot has joined to {voice_channel} : {voice_channel.id}🐙")
         
     @commands.command()

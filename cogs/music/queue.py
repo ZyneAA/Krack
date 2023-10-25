@@ -2,6 +2,7 @@ from collections import deque
 import random
 
 from cogs import config
+from cogs.music.song import Song
 
 class Play_List:
     def __init__(self):
@@ -9,16 +10,19 @@ class Play_List:
         self.bin = None
         self.loop = False
 
-    def add(self, val):
+    def add(self, url):
         if len(self.play_list) >= config.MAXIMUM_QUEUE_SIZE:
             return config.MAXIMU_QUEUE_SIZE_REACHED
-        self.play_list.append(val)
+        self.play_list.append(Song(url))
 
     def remove(self):
         if len(self.play_list) < 1:
             return config.MINIMUM_QUEUE_SIZE_REACHED
-        self.bin = self.play_list
+        self.bin = self.play_list[-1]
         self.play_list.pop()
+
+    def next(self):
+        self.play_list.popleft()
 
     def recover(self):
         return self.bin

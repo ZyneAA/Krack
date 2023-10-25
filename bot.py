@@ -2,14 +2,20 @@ import os, asyncio, discord, json, requests, sqlite3, csv, re
 from discord.ext import commands
 from discord.ui import Button
 import yt_dlp as youtube_dl
+
 from cogs.steam import _steam
+from cogs.music import utility
+from cogs.music.audio import Audio
 
 client = commands.Bot(command_prefix = ">", intents = discord.Intents.all())
-queues = {}
 
 @client.event
 async def on_ready():
     await client.change_presence(status = discord.Status.online, activity = discord.Game("🤡"))
+    for guild in client.guilds:
+        print(guild)
+        utility.QUEUES[guild] = Audio(client)
+    print(utility.QUEUES)
     print("Initialized bot!")
 
 class MyButton(discord.ui.View):
@@ -68,6 +74,7 @@ async def steam(ctx, *, name = ''):
         count = 0
         for row in csvreader:
             list = row[0]
+            await asyncio.sleep(0.1)
             # Search and match the names from database
             if sar in list:
                 await ctx.send("-- Found --")
