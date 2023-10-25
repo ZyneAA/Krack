@@ -13,4 +13,5 @@ class Button(discord.ui.View):
         with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
             info = ydl.extract_info(self.url, download = False)
             embed = discord.Embed(title = info.get('title'), description = info.get('uploader'), colour = discord.Colour.random())
+            # embed.set_image(url = info.get('thumbnail')) # Thumbnail 
         return embed

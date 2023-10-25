@@ -2,14 +2,20 @@ import os, asyncio, discord, json, requests, sqlite3, csv, re
 from discord.ext import commands
 from discord.ui import Button
 import yt_dlp as youtube_dl
+
 from cogs.steam import _steam
+from cogs.music import utility
+from cogs.music.audio import Audio
 
 client = commands.Bot(command_prefix = ">", intents = discord.Intents.all())
-queues = {}
 
 @client.event
 async def on_ready():
     await client.change_presence(status = discord.Status.online, activity = discord.Game("🤡"))
+    for guild in client.guilds:
+        print(guild)
+        utility.QUEUES[guild] = Audio(client)
+    print(utility.QUEUES)
     print("Initialized bot!")
 
 class MyButton(discord.ui.View):
@@ -59,8 +65,8 @@ class MyButton(discord.ui.View):
 @client.command()
 async def steam(ctx, *, name = ''):
     if name == "":
-        await ctx.send("Please Write '$stream game_name'")
-        return      
+        await ctx.send("Please Write '/stream game_name'")
+        return       
     sar = str(name).upper()
     matching_games = []
     except_terms = ['bundle', 'extension', 'non-game-term']
@@ -78,14 +84,15 @@ async def steam(ctx, *, name = ''):
                      matching_id.append(serial)
 
     if matching_games:
-            await ctx.send("--Found Games--") 
+            await ctx.send("--Found Games--")
             for game in matching_games:       
-                view = MyButton(game, row[1],"US")
+                view = MyButton(game,row[1],"US")
                 embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
                 await ctx.send( embed = embed , view = view)
+            await ctx.send()
             await ctx.send("-- That Is All --")
     else: 
-            await ctx.send("-- Not Found --")            
+            await ctx.send("-- Not Found --")           
 #------------------------------------------------------
 async def load():      
     for fname in os.listdir("./cogs"):

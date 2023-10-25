@@ -1,11 +1,11 @@
 from collections import deque
 
-z = deque()
+class a:
+    def __init__(self, p) -> None:
+        self.p = p
 
-z.append(121)
-
-z.append(12)
-
-z.pop()
-
-print(z)
+    def lol(self):
+        return self.p
+    
+s = a(342).lol()
+print(s)
