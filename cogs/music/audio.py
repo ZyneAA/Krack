@@ -13,59 +13,30 @@ class Audio:
         self.id = id
         self.voice  = voice
 
-    async def next_song(self):
+    async def next_song(self, error):
+        self.queue.next()
         next_song = self.queue.play_list[0]
         self.current_song = None
         if next_song is None:
             return
-        coro = await self.play_song(next_song)
+        coro = await self.play()
+        await self.client.loop.create_task(coro)
+    #self.voice.play(source,  after = lambda e: self.next_song(e))
 
-    async def play(self):
-        YDL_OPTIONS ={'format': 'bestaudio/best', 
-                            'postprocessors': [{
-                                   'key': 'FFmpegExtractAudio',
-                                    'preferredcodec': 'mp3',
-                                    'preferredquality': '192',
-                                }],
-                            'outtmpl': f"./queue/{self.id}/" + 'song',
-                        }
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            self.current_song = self.queue.play_list[0]
-            ydl.download(self.queue.play_list[0].url)
-            self.queue.next()
-            source = discord.FFmpegOpusAudio(f"./queue/{self.id}/song.mp3")
-            self.voice.play(source,  after = lambda e: self.next_song(e))
-
-    async def plaow(self):
-        YDL_OPTIONS ={'format': 'bestaudio/best', 
-                            'postprocessors': [{
-                                   'key': 'FFmpegExtractAudio',
-                                    'preferredcodec': 'mp3',
-                                    'preferredquality': '192',
-                                }],
-                            'outtmpl': f"./queue/{self.id}/" + 'song',
-                        }
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            for i in self.queue.play_list:
-                info = ydl.extract_info(i.url, download = False)
-                duration = info.get('duration')
-                url = info['url']
-                self.current_song = i
-
-                # ydl.download(i.url)
-                # source = discord.FFmpegOpusAudio(f"./queue/{self.id}/song.mp3")
-    
-                source = discord.FFmpegPCMAudio(url)
-                self.voice.play(source)
-                await asyncio.sleep(float(duration))
+    async def play(self):  
+        if self.queue.play_list == None:
+            return
+        self.current_song = self.queue.play_list[0]
+        print(self.current_song.url)
+        source = discord.FFmpegPCMAudio(self.current_song.url)
+        self.voice.play(source, after=lambda e : self.next_song(e))
 
 
 
-# YDL_OPTIONS ={'format': 'bestaudio/best', 
-#                             'postprocessors': [{
-#                                    'key': 'FFmpegExtractAudio',
-#                                     'preferredcodec': 'mp3',
-#                                     'preferredquality': '192',
-#                                 }],
-#                             'outtmpl': f"./queue/{self.id}/" + 'song',
-#                         }
+            # while self.voice.is_playing():
+            #     await asyncio.sleep(1)
+            #     if not self.voice.is_playing():
+            #         print("next one")
+            #         self.queue.next()
+            # if not self.voice.is_playing():
+            #     self.queue.next()

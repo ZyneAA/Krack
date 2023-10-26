@@ -22,6 +22,9 @@ class Play_List:
         self.play_list.pop()
 
     def next(self):
+        if self.play_list == None:
+            return
+        print("inside next function")
         self.play_list.popleft()
 
     def recover(self):
