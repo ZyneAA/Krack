@@ -42,11 +42,8 @@ class Music(commands.Cog):
             if utility.QUEUES[payload.player.guild].queue != None:
                 del utility.QUEUES[payload.player.guild].queue[0]
                 next_one: wavelink.YouTubeMusicTrack = utility.QUEUES[payload.player.guild].queue[0]
-                print(next_one)
                 await payload.player.play(next_one)
-
             else:
-
                 pass
 
         print("Something has stopped playing")
@@ -73,6 +70,10 @@ class Music(commands.Cog):
             return
 
         track: wavelink.YouTubeTrack = tracks[0]
+
+        play_list = wavelink.Queue()
+        play_list.put(tracks)
+        utility.QUEUES[guild].queue = play_list
 
         duration = self.mak_duraion(track.length)
         image = await track.fetch_thumbnail()
