@@ -17,7 +17,7 @@ def steam_data():
                 tp = (k["name"], k["appid"])
                 x.append(tp)
                 d.append({"name": k["name"].upper(), "appid": k["appid"]})
-    with open('file.csv', 'w', encoding = 'utf-8', newline='') as file: 
+    with open('cogs/steam/file.csv', 'w', encoding = 'utf-8', newline='') as file: 
         fields = ["name", "appid"]
         writer = csv.DictWriter(file, fieldnames = fields)
         writer.writerows(d)
