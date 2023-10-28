@@ -1,22 +1,41 @@
-import discord, asyncio
+import discord, os
+from pathlib import Path
 from discord.ext import commands
-import os
+from discord.message import Message
 
-#import all of the cogs
-from music_cog import music_cog
+class Krack(commands.Bot):
+    def __init__(self):
+        super().__init__(command_prefix = ">", case_insensitive = True, intents = discord.Intents.all())
 
-bot = commands.Bot(command_prefix='$', intents = discord.Intents.all())
+    def setup(self):
 
-#remove the default help command so that we can write out own
-bot.remove_command('help')
+        print("Krack is awaking.......")
 
-#register the class with the bot
-#await bot.add_cog(music_cog(bot))
+    def run(self):
+        self.setup()
+        with open("TOKEN", "r") as token:
+            super().run("MTE2MTk0MDY0MjEwOTMzNzY0MQ.GGd3zz.th3ySOCFKVDRpT_DhfPCHj6DsbFGFwGtS5iUTI", reconnect = True)
 
-async def load():
-    await bot.add_cog(music_cog(bot))
+    async def on_ready(self):
+        self.client_id = (await self.application_info()).id
+        print("Krack is ready.")
 
-asyncio.run(load())
+    async def process_commands(self, msg: Message):
+        ctx = await self.get_context(msg, cls = commands.Context)
 
-#start the bot with our token
-bot.run("MTA3NDMzNzUxMjMyOTMxNDM5NA.GxPluR.9lRMchX9Frvu-4B6fWJfJ1NTtTh6jKYtG0Xo4g")
+        if ctx.command is not None:
+            await self.invoke(ctx)
+
+    async def on_message(self, msg):
+        if not msg.author.bot:
+            await self.process_commands(msg)   
+    
+def main():
+    bot = Krack()   
+    for fname in os.listdir("../dump/cogs"):
+        if fname.endswith(".py") and not fname.startswith("_") and not fname[0].islower():
+            bot.load_extension(f"cogs.{fname[:-3]}")
+    bot.run()
+
+if __name__ == "__main__":
+    main()
