@@ -23,6 +23,7 @@ class Krack(commands.Bot):
         await self.load_extension("cogs.Finder")
         await self.load_extension("cogs.Music")
         await self.load_extension("cogs.Utility")
+        await self.load_extension("cogs.Steam")
 
         # Registering all the guilds that the bot had joined
         for guild in self.guilds:
@@ -45,6 +46,7 @@ async def reload_cog(ctx):
     await bot.reload_extension("cogs.Finder")
     await bot.reload_extension("cogs.Music")
     await bot.reload_extension("cogs.Utility")
+    await bot.reload_extension("cogs.Steam")
 
 if __name__ == "__main__":
     main()
