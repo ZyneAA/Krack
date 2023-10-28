@@ -97,11 +97,11 @@ class Finder(commands.Cog):
 
         if matching_games:
                 await ctx.send("--Found Games--")
-                for game in matching_games:       
-                    view = steam_embed.Button(game,row[1],"US")
+                for game,id in zip(matching_games,matching_id):       
+                    view = steam_embed.Button(game,id,"us")
                     embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
                     await ctx.send( embed = embed , view = view)
-                await ctx.send()
+
                 await ctx.send("-- That Is All --")
         else: 
                 await ctx.send("-- Not Found --")  

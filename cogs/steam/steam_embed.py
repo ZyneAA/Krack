@@ -11,37 +11,39 @@ class Button(discord.ui.View):
         # self.add_item(Button(label = "US", custom_id="my_button0"))
         # self.add_item(Button(label = "ARS", custom_id="my_button1"))
     
-    @discord.ui.button(label="Select", style=discord.ButtonStyle.gray)
-    async def my_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
-                
-        # Debug the detailed app data with JSON #
-        url = f"https://store.steampowered.com/api/appdetails/?appids={self.id}&cc={self.region}&l=en"
+    @discord.ui.button(label="GetDetail(US)", style=discord.ButtonStyle.green, custom_id="button_us")
+    async def us_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.send_game_details(interaction, self.region)
+
+    @discord.ui.button(label="GetDetail(ARS)", style=discord.ButtonStyle.green, custom_id="button_ars")
+    async def ars_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.send_game_details(interaction, "ar")
+
+    async def send_game_details(self, interaction, region):
+        url = f"https://store.steampowered.com/api/appdetails/?appids={self.id}&cc={region}&l=en"
         response = requests.get(url)
         data = json.loads(response.text)
-        with open("detail_1.json", "w") as f:
-             json.dump(data, f, indent = 4)            
-
         
-        if data[self.id]["success"] == True: 
-            
+        if data[self.id]["success"] == True:
             if not "price_overview" in data[self.id]['data']:
-                embed = discord.Embed(title = "Sorry 😶‍🌫️", description = f"The data regarding with {self.name} could not be found") 
-                await interaction.response.send_message(embed = embed)
+                embed = discord.Embed(title="Sorry 😶‍🌫️", description=f"The data regarding {self.name} could not be found")
+                await interaction.response.edit_message(embed=embed , view=self)
             formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
             if data[self.id]["data"]["is_free"] == False:
-                embed = discord.Embed(title = f"{data[self.id]['data']['name']}     {data[self.id]['data']['price_overview']['final_formatted']}", description = formatted_des, colour = discord.Colour.random())
+                embed = discord.Embed(title=f"{data[self.id]['data']['name']}     {data[self.id]['data']['price_overview']['final_formatted']}",
+                                      description=formatted_des, colour=discord.Colour.random())
             elif data[self.id]["data"]["is_free"] == True:
-                embed = discord.Embed(title = f"{data[self.id]['data']['name']}     FREE", description = formatted_des, colour = discord.Colour.random())
-            embed.set_footer(text = "Powered by ANC")
-            embed.set_image(url = data[self.id]["data"]["header_image"])
+                embed = discord.Embed(title=f"{data[self.id]['data']['name']}     FREE",
+                                      description=formatted_des, colour=discord.Colour.random())
+            embed.set_footer(text="Powered by ANC")
+            embed.set_image(url=data[self.id]["data"]["header_image"])
             a = []
             for i in data[self.id]["data"]["genres"]:
                 a.append(i["description"])
             formatted_genre = "❖".join(a)
-            embed.add_field(name = "✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢", value = " ", inline = False)
-            embed.add_field(name = formatted_genre, value = " ", inline = False)
-            await interaction.response.send_message(embed = embed)
-            
+            embed.add_field(name="✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢", value=" ", inline=False)
+            embed.add_field(name=formatted_genre, value=" ", inline=False)
+            await interaction.response.edit_message(embed=embed, view=self)
         else:
-            embed = discord.Embed(title = "Sorry 😶‍🌫️", description = f"The data regarding with {self.name} could not be found") 
-            await interaction.response.send_message(embed = embed)
+            embed = discord.Embed(title="Sorry 😶‍🌫️", description=f"The data regarding {self.name} could not be found")
+            await interaction.response.edit_message(embed=embed, view=self)
