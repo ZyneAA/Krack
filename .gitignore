@@ -7,3 +7,5 @@ __pycache__/
 venv/
 TOKEN
 play_now/
+*.exe
+logs/
