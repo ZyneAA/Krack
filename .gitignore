@@ -8,3 +8,4 @@ venv/
 TOKEN
 play_now/
 *.exe
+logs/
