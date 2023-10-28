@@ -34,12 +34,17 @@ class Krack(commands.Bot):
         node: wavelink.Node = wavelink.Node(uri='http://localhost:2333', password='youshallnotpass')
         await wavelink.NodePool.connect(client=self, nodes=[node])
  
-
+bot = Krack()
 def main():
-    bot = Krack()
     with open("TOKEN", "r") as token:
         bot.run(token.read())
 
+@bot.command()
+async def reload_cog(ctx):
+
+    await bot.reload_extension("cogs.Finder")
+    await bot.reload_extension("cogs.Music")
+    await bot.reload_extension("cogs.Utility")
 
 if __name__ == "__main__":
     main()
