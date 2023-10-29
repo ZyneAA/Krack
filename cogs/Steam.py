@@ -1,4 +1,4 @@
-import os, asyncio, discord, json, requests, sqlite3, csv, re
+import discord, csv, re
 from discord.ext import commands, tasks
 
 from cogs.steam import steam_embed
