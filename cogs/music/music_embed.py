@@ -6,7 +6,7 @@ import yt_dlp as youtube_dl
 
 class Button(discord.ui.View):
 
-    def __init__(self, url, duration, title, uploader, image):
+    def __init__(self, url, duration, title, uploader, image, queue_no):
         super().__init__()
 
         self.url = url
@@ -14,11 +14,12 @@ class Button(discord.ui.View):
         self.uploader = uploader
         self.title = title
         self.image = image
+        self.queue_no = queue_no
 
 
     def jalan(self):
 
-        embed = discord.Embed(title = f"🎶{self.title}🎶", description = "💿 Now Playing 💿", type='rich', url = self.url, colour = discord.Colour.random())
+        embed = discord.Embed(title = f"🎶{self.title}🎶", description = f"💿 Now Playing | Queue : {self.queue_no} 💿", type='rich', url = self.url, colour = discord.Colour.random())
         embed.add_field(name = f"☁️ Uploader : {self.uploader} ☁️", value = " ", inline = False)
         embed.add_field(name = f"🕘 Duration : {self.duration} 🕘", value = " ", inline = False)
         embed.set_thumbnail(url = self.image)
@@ -28,7 +29,7 @@ class Button(discord.ui.View):
     
     def jalone(self):
 
-        embed = discord.Embed(title = f"🎶{self.title}🎶", description = " 📥 Added To The Queue 📥", type='rich', url = self.url, colour = discord.Colour.random())
+        embed = discord.Embed(title = f"🎶{self.title}🎶", description = f" 📥 Added To The Queue | Queue : {self.queue_no} 📥", type='rich', url = self.url, colour = discord.Colour.random())
         embed.add_field(name = f"☁️ Uploader : {self.uploader} ☁️", value = " ", inline = False)
         embed.add_field(name = f"🕘 Duration : {self.duration} 🕘", value = " ", inline = False)
         embed.set_thumbnail(url = self.image)

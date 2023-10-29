@@ -6,3 +6,6 @@ class Controller:
         
         self.bot = bot
         self.queue = wavelink.Queue()
+        self.queue_no = 0
+        self.playing = False
+        self.timeout = 30

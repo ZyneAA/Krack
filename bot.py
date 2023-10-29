@@ -1,5 +1,4 @@
-import discord
-import wavelink
+import discord, wavelink
 from discord.ext import commands
 
 from cogs.steam import steam
@@ -13,7 +12,7 @@ class Krack(commands.Bot):
         intents = discord.Intents.all()
         intents.message_content = True
 
-        super().__init__(intents = intents, command_prefix = '/')
+        super().__init__(intents = intents, command_prefix = '>')
 
     async def on_ready(self) -> None:
 
@@ -35,10 +34,14 @@ class Krack(commands.Bot):
         node: wavelink.Node = wavelink.Node(uri='http://localhost:2333', password='youshallnotpass')
         await wavelink.NodePool.connect(client=self, nodes=[node])
  
+
 bot = Krack()
+
 def main():
+
     with open("TOKEN", "r") as token:
         bot.run(token.read())
+
 
 @bot.command()
 async def reload_cog(ctx):
@@ -47,6 +50,8 @@ async def reload_cog(ctx):
     await bot.reload_extension("cogs.Music")
     await bot.reload_extension("cogs.Utility")
     await bot.reload_extension("cogs.Steam")
+
+    await ctx.send("COGS RELOADED!")
 
 if __name__ == "__main__":
     main()
