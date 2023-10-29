@@ -15,7 +15,7 @@ class Steam(commands.Cog):
             return       
         sar = str(name).upper()
         matching_games = []
-        except_terms = ['bundle', 'extension', 'non-game-term']
+        except_terms = ['bundle', 'extension', 'non-game-term', 'skin' , 'map']
         matching_id = []
         print(sar)
         with open("./cogs/steam/file.csv", "r", encoding = 'utf-8') as f:

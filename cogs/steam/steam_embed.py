@@ -18,6 +18,14 @@ class Button(discord.ui.View):
     @discord.ui.button(label="GetDetail(ARS)", style=discord.ButtonStyle.green, custom_id="button_ars")
     async def ars_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.send_game_details(interaction, "ar")
+    
+    @discord.ui.button(label="GetDetail(TL)", style=discord.ButtonStyle.green, custom_id="button_tl")
+    async def tl_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.send_game_details(interaction, "tr")
+
+    @discord.ui.button(label="GetDetail(INDIA)", style=discord.ButtonStyle.green, custom_id="button_₹")
+    async def in_button_callback(self,interaction: discord.Interaction, button: discord.ui.Button):
+        await self.send_game_details(interaction,'in')
 
     async def send_game_details(self, interaction, region):
         url = f"https://store.steampowered.com/api/appdetails/?appids={self.id}&cc={region}&l=en"
@@ -28,7 +36,8 @@ class Button(discord.ui.View):
             if not "price_overview" in data[self.id]['data']:
                 embed = discord.Embed(title="Sorry 😶‍🌫️", description=f"The data regarding {self.name} could not be found")
                 await interaction.response.edit_message(embed=embed , view=self)
-            formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
+            else:
+                formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
             if data[self.id]["data"]["is_free"] == False:
                 embed = discord.Embed(title=f"{data[self.id]['data']['name']}     {data[self.id]['data']['price_overview']['final_formatted']}",
                                       description=formatted_des, colour=discord.Colour.random())

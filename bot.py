@@ -1,13 +1,15 @@
 import discord
 import wavelink
 from discord.ext import commands
-
+import subprocess
+import time
 from cogs.steam import steam
 from cogs.music import utility
 from cogs._CONTROLLER_ import Controller
 
+#subprocess.Popen("java -jar ./lavalink/Lavalink.jar",shell = True)
 class Krack(commands.Bot):
-
+   
     def __init__(self) -> None:
 
         intents = discord.Intents.all()
@@ -47,6 +49,6 @@ async def reload_cog(ctx):
     await bot.reload_extension("cogs.Music")
     await bot.reload_extension("cogs.Utility")
     await bot.reload_extension("cogs.Steam")
-
+    print("--Done Reloading--")
 if __name__ == "__main__":
     main()
