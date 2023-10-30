@@ -3,9 +3,10 @@ from discord import opus
 from discord.ext import commands, tasks
 from discord.utils import get
 import yt_dlp as youtube_dl
+from cogs import BRIDGE
 
 from cogs.music.queue import Play_List 
-from cogs.music import utility, music_embed, audio
+from cogs.music import music_embed, audio
 
 class Yt_Player(commands.Cog):        
     
@@ -32,8 +33,8 @@ class Yt_Player(commands.Cog):
     async def play(self, ctx):
         voice = ctx.voice_client
         server_id = ctx.guild
-        utility.QUEUES[server_id].voice = voice
-        lol = await utility.QUEUES[server_id].play()
+        BRIDGE.QUEUES[server_id].voice = voice
+        lol = await BRIDGE.QUEUES[server_id].play()
 
     @commands.command()
     async def play_now(self, ctx, *, url = 'https://www.youtube.com/watch?v=zSwcTiurwwk'):  
@@ -55,30 +56,30 @@ class Yt_Player(commands.Cog):
     @commands.command()
     async def queue(self, ctx, *, url):   
         server_id = ctx.guild 
-        print(utility.QUEUES[server_id])
+        print(BRIDGE.QUEUES[server_id])
         # await ctx.channel.purge(limit = 1) # No need for this line
-        if  utility.QUEUES[server_id].queue == None :
+        if  BRIDGE.QUEUES[server_id].queue == None :
             play_list = Play_List() 
             play_list.add(url)
-            utility.QUEUES[server_id].queue = play_list
+            BRIDGE.QUEUES[server_id].queue = play_list
         else:
-            utility.QUEUES[server_id].queue.add(url)
+            BRIDGE.QUEUES[server_id].queue.add(url)
         await ctx.send("Added to the queue!")   
     
     @commands.command()
     async def clear_queue(self, ctx):   
         server_id = ctx.guild.id  
-        if not server_id in utility.QUEUES:
+        if not server_id in BRIDGE.QUEUES:
             await ctx.send("There is no song in the queue!")
             return
-        del utility.QUEUES[server_id]
+        del BRIDGE.QUEUES[server_id]
         await ctx.send("Queue cleared!")  
     
 
     @commands.command()
     async def show_queue(self, ctx):  
         server_id = ctx.guild  
-        for i in utility.QUEUES[server_id].queue.play_list:
+        for i in BRIDGE.QUEUES[server_id].queue.play_list:
             await ctx.send(embed = i.song_info)
                  
     @commands.command()

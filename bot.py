@@ -2,7 +2,7 @@ import discord, wavelink
 from discord.ext import commands
 
 from cogs.steam import steam
-from cogs.music import utility
+from cogs import BRIDGE
 from cogs._CONTROLLER_ import Controller
 
 class Krack(commands.Bot):
@@ -26,7 +26,7 @@ class Krack(commands.Bot):
 
         # Registering all the guilds that the bot had joined
         for guild in self.guilds:
-            utility.QUEUES[guild] = Controller(guild)
+            BRIDGE.QUEUES[guild] = Controller(guild)
 
 
     async def setup_hook(self) -> None:
