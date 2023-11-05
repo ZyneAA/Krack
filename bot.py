@@ -12,7 +12,7 @@ class Krack(commands.Bot):
         intents = discord.Intents.all()
         intents.message_content = True
 
-        super().__init__(intents = intents, command_prefix = '>')
+        super().__init__(intents = intents, command_prefix = '/')
 
     async def on_ready(self) -> None:
 
