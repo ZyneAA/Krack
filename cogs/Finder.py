@@ -1,4 +1,3 @@
-import os, asyncio, discord, json, requests, sqlite3, csv, re
 from discord.ext import commands, tasks
 
 from cogs.steam import steam_embed
@@ -74,4 +73,5 @@ class Finder(commands.Cog):
                 await ctx.send("T")               
                 
 async def setup(client):
+    
     await client.add_cog(Finder(client))
