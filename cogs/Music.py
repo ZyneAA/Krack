@@ -1,9 +1,11 @@
 import discord, wavelink, asyncio
 from discord.ext import commands
+from discord import app_commands
 
 # from cogs.music.queue import Play_List
 from cogs._CONTROLLER_ import CONTROLLERS
 from cogs.music import music_embed
+from cogs.music import util
 
 
 class Music(commands.Cog):
@@ -95,7 +97,7 @@ class Music(commands.Cog):
                 track: wavelink.YouTubeTrack = CONTROLLERS[guild].queue[0]
                 CONTROLLERS[guild].playing = True
 
-                duration = self.mak_duraion(track.length)
+                duration = util.make_duraion(track.length)
                 image = await track.fetch_thumbnail()
                 embed = music_embed.Button(track.uri ,duration, track.title, track.author, image, CONTROLLERS[guild].queue_no)
                 await ctx.send(embed = embed.jalan())
@@ -114,7 +116,7 @@ class Music(commands.Cog):
         CONTROLLERS[guild].queue_no += 1
         CONTROLLERS[guild].queue.put(track)
 
-        duration = self.mak_duraion(track.length)
+        duration = util.make_duraion(track.length)
         image = await track.fetch_thumbnail()
         embed = music_embed.Button(track.uri ,duration, track.title, track.author, image, CONTROLLERS[guild].queue_no)
         
@@ -126,13 +128,6 @@ class Music(commands.Cog):
         else:
             await ctx.send(embed = embed.jalone())
             return
-
-
-    def mak_duraion(self, length):
-        seconds = length / 1000
-        minutes = seconds // 60
-        remaining_seconds = seconds % 60
-        return f"{int(minutes)}:{int(remaining_seconds)}"
 
 
     @commands.command()
@@ -152,7 +147,7 @@ class Music(commands.Cog):
         await ctx.send(CONTROLLERS[guild].queue)
 
         da_track =  CONTROLLERS[guild].queue[-1]
-        duration = self.mak_duraion(da_track.length)
+        duration = util.make_duraion(da_track.length)
         image = await da_track.fetch_thumbnail()
         embed = music_embed.Button(da_track.uri ,duration, da_track.title, da_track.author, image, CONTROLLERS[guild].queue_no)
         
@@ -278,7 +273,12 @@ class Music(commands.Cog):
         
         vc: wavelink.Player = await channel.connect(cls=wavelink.Player)
         return vc
+    
 
+    @app_commands.command(name = "changed", description = "Add a song to a playlist")
+    async def func(self, interaction: discord.Interaction, song_name: str, playlist: str):
+
+        await interaction.response.send_message("ff")
 
 async def setup(client):
 
