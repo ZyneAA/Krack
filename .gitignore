@@ -2,7 +2,6 @@ __pycache__/
 *.csv
 *.mp3
 *.json
-*.db
 .DS_Store
 venv/
 TOKEN

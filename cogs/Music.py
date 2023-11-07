@@ -2,7 +2,7 @@ import discord, wavelink, asyncio
 from discord.ext import commands
 
 # from cogs.music.queue import Play_List
-from cogs import BRIDGE
+from cogs._CONTROLLER_ import CONTROLLERS
 from cogs.music import music_embed
 
 
@@ -36,30 +36,30 @@ class Music(commands.Cog):
 
         time = 0
 
-        if str(payload.event) == "END" or BRIDGE.QUEUES[payload.player.guild].playing == True:
+        if str(payload.event) == "END" or CONTROLLERS[payload.player.guild].playing == True:
 
-            if len(BRIDGE.QUEUES[payload.player.guild].queue) == 1:
-                del BRIDGE.QUEUES[payload.player.guild].queue[0]
-                BRIDGE.QUEUES[payload.player.guild].queue_no = 0
-                BRIDGE.QUEUES[payload.player.guild].playing = False
+            if len(CONTROLLERS[payload.player.guild].queue) == 1:
+                del CONTROLLERS[payload.player.guild].queue[0]
+                CONTROLLERS[payload.player.guild].queue_no = 0
+                CONTROLLERS[payload.player.guild].playing = False
 
                 # Timeout for the bot
                 while True:
 
-                    if BRIDGE.QUEUES[payload.player.guild].playing == False:
+                    if CONTROLLERS[payload.player.guild].playing == False:
                         await asyncio.sleep(1)
                         time += 1
-                    if time == BRIDGE.QUEUES[payload.player.guild].timeout:
+                    if time == CONTROLLERS[payload.player.guild].timeout:
                         await payload.player.disconnect()
-                    if BRIDGE.QUEUES[payload.player.guild].playing == True:
+                    if CONTROLLERS[payload.player.guild].playing == True:
                         break
                     
                 return
 
-            if BRIDGE.QUEUES[payload.player.guild].queue != None:
-                del BRIDGE.QUEUES[payload.player.guild].queue[0]
-                BRIDGE.QUEUES[payload.player.guild].queue_no -= 1
-                next_one: wavelink.YouTubeMusicTrack = BRIDGE.QUEUES[payload.player.guild].queue[0]
+            if CONTROLLERS[payload.player.guild].queue != None:
+                del CONTROLLERS[payload.player.guild].queue[0]
+                CONTROLLERS[payload.player.guild].queue_no -= 1
+                next_one: wavelink.YouTubeMusicTrack = CONTROLLERS[payload.player.guild].queue[0]
                 await payload.player.play(next_one)
             else:
                 pass
@@ -72,7 +72,7 @@ class Music(commands.Cog):
 
         guild = ctx.guild
 
-        if len(BRIDGE.QUEUES[guild].queue) == 0 and search == "":
+        if len(CONTROLLERS[guild].queue) == 0 and search == "":
             pass
         else:
             if not ctx.voice_client:
@@ -82,22 +82,22 @@ class Music(commands.Cog):
         
         if search == '':
 
-            if BRIDGE.QUEUES[guild].playing == True:
+            if CONTROLLERS[guild].playing == True:
                 sender = discord.Embed(color = discord.Color.red(), title = "Opps", description = "Already playing a song") 
                 await ctx.send(embed = sender)
                 return
 
-            if len(BRIDGE.QUEUES[guild].queue) == 0:
+            if len(CONTROLLERS[guild].queue) == 0:
                 sender = discord.Embed(color = discord.Color.red(), title = "Opps", description = "No song in the queue") 
                 await ctx.send(embed = sender)    #ADD EMBED HERE
                 return
             else:
-                track: wavelink.YouTubeTrack = BRIDGE.QUEUES[guild].queue[0]
-                BRIDGE.QUEUES[guild].playing = True
+                track: wavelink.YouTubeTrack = CONTROLLERS[guild].queue[0]
+                CONTROLLERS[guild].playing = True
 
                 duration = self.mak_duraion(track.length)
                 image = await track.fetch_thumbnail()
-                embed = music_embed.Button(track.uri ,duration, track.title, track.author, image, BRIDGE.QUEUES[guild].queue_no)
+                embed = music_embed.Button(track.uri ,duration, track.title, track.author, image, CONTROLLERS[guild].queue_no)
                 await ctx.send(embed = embed.jalan())
 
                 await vc.play(track)
@@ -111,17 +111,17 @@ class Music(commands.Cog):
             return
 
         track: wavelink.YouTubeTrack = tracks[0]
-        BRIDGE.QUEUES[guild].queue_no += 1
-        BRIDGE.QUEUES[guild].queue.put(track)
+        CONTROLLERS[guild].queue_no += 1
+        CONTROLLERS[guild].queue.put(track)
 
         duration = self.mak_duraion(track.length)
         image = await track.fetch_thumbnail()
-        embed = music_embed.Button(track.uri ,duration, track.title, track.author, image, BRIDGE.QUEUES[guild].queue_no)
+        embed = music_embed.Button(track.uri ,duration, track.title, track.author, image, CONTROLLERS[guild].queue_no)
         
-        if BRIDGE.QUEUES[guild].playing == False:
+        if CONTROLLERS[guild].playing == False:
             await ctx.send(embed = embed.jalan())
-            await vc.play(BRIDGE.QUEUES[guild].queue[0])
-            BRIDGE.QUEUES[guild].playing = True
+            await vc.play(CONTROLLERS[guild].queue[0])
+            CONTROLLERS[guild].playing = True
             return
         else:
             await ctx.send(embed = embed.jalone())
@@ -141,20 +141,20 @@ class Music(commands.Cog):
         guild = ctx.guild
         tracks: list[wavelink.YouTubeTrack] = await wavelink.YouTubeTrack.search(search)
 
-        if BRIDGE.QUEUES[guild].queue == None :
+        if CONTROLLERS[guild].queue == None :
             play_list = wavelink.Queue()
             play_list.put(tracks[0])
-            BRIDGE.QUEUES[guild].queue = play_list
+            CONTROLLERS[guild].queue = play_list
         else:
-            BRIDGE.QUEUES[guild].queue.put(tracks[0])
+            CONTROLLERS[guild].queue.put(tracks[0])
 
-        BRIDGE.QUEUES[guild].queue_no += 1
-        await ctx.send(BRIDGE.QUEUES[guild].queue)
+        CONTROLLERS[guild].queue_no += 1
+        await ctx.send(CONTROLLERS[guild].queue)
 
-        da_track =  BRIDGE.QUEUES[guild].queue[-1]
+        da_track =  CONTROLLERS[guild].queue[-1]
         duration = self.mak_duraion(da_track.length)
         image = await da_track.fetch_thumbnail()
-        embed = music_embed.Button(da_track.uri ,duration, da_track.title, da_track.author, image, BRIDGE.QUEUES[guild].queue_no)
+        embed = music_embed.Button(da_track.uri ,duration, da_track.title, da_track.author, image, CONTROLLERS[guild].queue_no)
         
         await ctx.send(f"{tracks[0]} was added to the queue.", embed = embed.jalone())
 
@@ -188,26 +188,25 @@ class Music(commands.Cog):
 
         guild = ctx.guild
 
-        if len(BRIDGE.QUEUES[guild].queue) == 0:
+        if len(CONTROLLERS[guild].queue) == 0:
             sender = discord.Embed(color = discord.Color.red(), title = "Opps", description = "No song in the queue") 
             await ctx.send(embed = sender)
 
         node = wavelink.NodePool.get_node()
         player = node.get_player(guild.id)
 
-        if BRIDGE.QUEUES[guild].playing == False:
+        if CONTROLLERS[guild].playing == False:
             pass
         else:
             await player.stop()
 
-        if len(BRIDGE.QUEUES[guild].queue) > 0:
-            del BRIDGE.QUEUES[guild].queue[0]
-            song: wavelink.YouTubeMusicTrack = BRIDGE.QUEUES[guild].queue[0]
+        if len(CONTROLLERS[guild].queue) > 0:
+            del CONTROLLERS[guild].queue[0]
+            song: wavelink.YouTubeMusicTrack = CONTROLLERS[guild].queue[0]
             await player.play(song)
             return
-        else:
-            pass
-            return    
+        
+        return    
 
     
     @commands.command()
@@ -216,8 +215,21 @@ class Music(commands.Cog):
         node = wavelink.NodePool.get_node()
         player = node.get_player(ctx.guild.id)
         await player.stop()
-        await BRIDGE.QUEUES[ctx.guild].queue.shuffle()
-
+        await CONTROLLERS[ctx.guild].queue.shuffle()
+        
+    
+    @commands.command()
+    async def clear_queue(self, ctx: commands.Context) -> None:
+        
+        guild = ctx.guild
+        
+        if len(CONTROLLERS[guild].queue) == 0:
+            await ctx.send("No song in the queue to clear.")
+            return
+        
+        CONTROLLERS[guild].queue.clear()
+        await ctx.send("All songs in the queue are cleared.")
+        
     
     @commands.command()
     async def show_queue(self, ctx: commands.Context) -> None:
@@ -228,13 +240,13 @@ class Music(commands.Cog):
         sar = ""
         embed = discord.Embed(title = "Songs that are currently in the queue :", color = discord.Color.random())
 
-        for i in BRIDGE.QUEUES[guild].queue:
+        for i in CONTROLLERS[guild].queue:
             sar += f"{count} : {i}\n"
             embed.add_field(name = f"{sar}", value = "", inline = False)
             sar = ""
             count +=1
     
-        print(BRIDGE.QUEUES[guild].queue)
+        print(CONTROLLERS[guild].queue)
         await ctx.send(embed = embed)
 
 
