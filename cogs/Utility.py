@@ -36,6 +36,13 @@ class Utility(commands.Cog):
         await ctx.send(embed = embed)
 
 
+    # Update all slash commands globally
+    @commands.command()
+    async def sync(self, ctx):
+        await ctx.bot.tree.sync()
+        print("oko")
+
+
 async def setup(bot):
     
     await bot.add_cog(Utility(bot))
