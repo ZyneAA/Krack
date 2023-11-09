@@ -275,10 +275,17 @@ class Music(commands.Cog):
         return vc
     
 
-    @app_commands.command(name = "changed", description = "Add a song to a playlist")
-    async def func(self, interaction: discord.Interaction, song_name: str, playlist: str):
+    @app_commands.command(name = "add", description = "Add a song to a playlist")
+    async def func(self, interaction: discord.Interaction, song: str):
 
-        await interaction.response.send_message("ff")
+        tracks: list[wavelink.YouTubeTrack] = await wavelink.YouTubeTrack.search(song)
+        duration = util.make_duraion(tracks[0].length)
+        image = await tracks[0].fetch_thumbnail()
+
+        embed = music_embed.Button(tracks[0].source, duration, tracks[0].title, tracks[0].author, image)
+        embed = embed.jalwan()
+
+        await interaction.response.send_message(embeds = embed)
 
 async def setup(client):
 
