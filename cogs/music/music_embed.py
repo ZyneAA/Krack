@@ -6,7 +6,7 @@ import yt_dlp as youtube_dl
 
 class Button(discord.ui.View):
 
-    def __init__(self, url, duration, title, uploader, image, queue_no):
+    def __init__(self, url = None, duration = None, title = None, uploader = None, image = None, queue_no = None):
         super().__init__()
 
         self.url = url
@@ -30,6 +30,15 @@ class Button(discord.ui.View):
     def jalone(self):
 
         embed = discord.Embed(title = f"🎶{self.title}🎶", description = f" 📥 Added To The Queue | Queue : {self.queue_no} 📥", type='rich', url = self.url, colour = discord.Colour.random())
+        embed.add_field(name = f"☁️ Uploader : {self.uploader} ☁️", value = " ", inline = False)
+        embed.add_field(name = f"🕘 Duration : {self.duration} 🕘", value = " ", inline = False)
+        embed.set_thumbnail(url = self.image)
+
+        return embed
+    
+    def jalwan(self):
+
+        embed = discord.Embed(title = f"🎶{self.title}🎶", description = f" Select a Playlist", type='rich', url = self.url, colour = discord.Colour.random())
         embed.add_field(name = f"☁️ Uploader : {self.uploader} ☁️", value = " ", inline = False)
         embed.add_field(name = f"🕘 Duration : {self.duration} 🕘", value = " ", inline = False)
         embed.set_thumbnail(url = self.image)

@@ -1,5 +1,8 @@
 import discord, wavelink, sqlite3, asyncio
+from typing import Literal, Optional
 from discord.ext import commands
+from discord.ext.commands import Greedy, Context
+from discord import app_commands
 
 from cogs.steam import steam
 from cogs._CONTROLLER_ import Controller, CONTROLLERS
@@ -30,12 +33,19 @@ class Krack(commands.Bot):
         for guild in self.guilds:
             
             CONTROLLERS[guild] = Controller(guild)
-            
-            insert_data = ("INSERT INTO guilds (guild, playlist) "
-              "VALUES (?, ?)")
-            data = (guild.name, None)
-            cursor.execute(insert_data, data)
-        con.commit()
+            await self.tree.sync(guild = discord.Object(id = guild.id))
+
+            try:
+                insert_data = ("INSERT INTO guilds (guild, playlist) "
+                               "VALUES (?, ?)")
+                data = (guild.name, None)
+                cursor.execute(insert_data, data)
+                con.commit()
+            except:
+                continue
+
+        print("Guilds which are already in the database will not be added again")
+
         cursor.close()
         con.close()
 
@@ -73,7 +83,7 @@ async def on_guild_join(guild):
     cursor.close() 
     con.close()
 
-
+# Reload cogs
 @bot.command()
 async def reload_cog(ctx):
 
@@ -83,6 +93,7 @@ async def reload_cog(ctx):
     await bot.reload_extension("cogs.Steam")
 
     await ctx.send("COGS RELOADED!")
+
 
 if __name__ == "__main__":
     main()
