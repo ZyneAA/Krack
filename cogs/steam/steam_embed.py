@@ -9,8 +9,8 @@ class Button(discord.ui.View):
         self.id = id
         self.region = region
         # self.add_item(Button(label = "US", custom_id="my_button0"))
-        # self.add_item(Button(label = "ARS", custom_id="my_button1"))
-    
+        # self.add_item(Button(label = "ARS", custom_id="my_button1")
+
     @discord.ui.button(label="GetDetail(US)", style=discord.ButtonStyle.green, custom_id="button_us")
     async def us_button_callback(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.send_game_details(interaction, self.region)
