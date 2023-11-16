@@ -27,7 +27,7 @@ class Button(discord.ui.View):
     async def in_button_callback(self,interaction: discord.Interaction, button: discord.ui.Button):
         await self.send_game_details(interaction,'in')
 
-    async def send_game_details(self, interaction, region):
+async def send_game_details(self, interaction, region):
         url = f"https://store.steampowered.com/api/appdetails/?appids={self.id}&cc={region}&l=en"
         response = requests.get(url)
         data = json.loads(response.text)
@@ -56,3 +56,8 @@ class Button(discord.ui.View):
         else:
             embed = discord.Embed(title="Sorry 😶‍🌫️", description=f"The data regarding {self.name} could not be found")
             await interaction.response.edit_message(embed=embed, view=self)
+
+
+
+
+
