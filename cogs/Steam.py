@@ -12,11 +12,12 @@ class Steam(commands.Cog):
     async def steam(self, ctx, *, name = ''):
         if name == "":
             await ctx.send("Please Write '/stream game_name'")
-            return       
-        sar = str(name).upper()
+            return 
         matching_games = []
-        except_terms = ['bundle', 'extension', 'non-game-term']
-        matching_id = []
+        matching_id = []     
+        sar = str(name).upper()
+        except_terms = ['bundle', 'extension', 'non-game-term', 'map' , 'skins', 'dlc' , '-' , 'profiles', 'tools' , 'test' , 'teaser']
+        
         print(sar)
         with open("./cogs/steam/file.csv", "r", encoding = 'utf-8') as f:
             csvreader = csv.reader(f)
@@ -26,8 +27,8 @@ class Steam(commands.Cog):
                 is_game = re.match(r'^[A-Za-z0-9\s-]+$', list) and not any(term in list.lower() for term in except_terms)
                 # Search and match the names from database 
                 if is_game and  list.startswith(sar):
-                        matching_games.append(list)
-                        matching_id.append(serial)
+                    matching_games.append(list)
+                    matching_id.append(serial)
 
         if matching_games:
                 await ctx.send("--Found Games--")
@@ -35,11 +36,14 @@ class Steam(commands.Cog):
                     view = steam_embed.Button(game,id,"us")
                     embed = discord.Embed(title = game, description = "Click the button below to get the detail!")  
                     await ctx.send( embed = embed , view = view)
-
+                
                 await ctx.send("-- That Is All --")
         else: 
                 await ctx.send("-- Not Found --")  
-               
+        
+        print(matching_games)
+        print(matching_id)
+        print(len(matching_games))
 
 async def setup(client):
     await client.add_cog(Steam(client))
