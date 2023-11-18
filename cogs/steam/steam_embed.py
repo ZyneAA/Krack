@@ -27,7 +27,7 @@ class Button(discord.ui.View):
     async def in_button_callback(self,interaction: discord.Interaction, button: discord.ui.Button):
         await self.send_game_details(interaction,'in')
 
-async def send_game_details(self, interaction, region):
+    async def send_game_details(self, interaction, region):
         url = f"https://store.steampowered.com/api/appdetails/?appids={self.id}&cc={region}&l=en"
         response = requests.get(url)
         data = json.loads(response.text)
@@ -39,9 +39,11 @@ async def send_game_details(self, interaction, region):
             else:
                 formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
             if data[self.id]["data"]["is_free"] == False:
+                formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
                 embed = discord.Embed(title=f"{data[self.id]['data']['name']}     {data[self.id]['data']['price_overview']['final_formatted']}",
                                       description=formatted_des, colour=discord.Colour.random())
             elif data[self.id]["data"]["is_free"] == True:
+                formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
                 embed = discord.Embed(title=f"{data[self.id]['data']['name']}     FREE",
                                       description=formatted_des, colour=discord.Colour.random())
             embed.set_footer(text="Powered by ANC")
