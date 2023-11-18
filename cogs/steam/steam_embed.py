@@ -31,30 +31,34 @@ class Button(discord.ui.View):
         url = f"https://store.steampowered.com/api/appdetails/?appids={self.id}&cc={region}&l=en"
         response = requests.get(url)
         data = json.loads(response.text)
+
+        embed = None
         
         if data[self.id]["success"] == True:
-            if not "price_overview" in data[self.id]['data']:
-                embed = discord.Embed(title="Sorry 😶‍🌫️", description=f"The data regarding {self.name} could not be found")
-                await interaction.response.edit_message(embed=embed , view=self)
-            else:
+
+            if data[self.id]["data"]["is_free"] == True:
                 formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
-            if data[self.id]["data"]["is_free"] == False:
+                embed = discord.Embed(title=f"{data[self.id]['data']['name']}     FREE",
+                                   description=formatted_des, colour=discord.Colour.random())
+
+            elif data[self.id]["data"]["is_free"] == False:
                 formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
                 embed = discord.Embed(title=f"{data[self.id]['data']['name']}     {data[self.id]['data']['price_overview']['final_formatted']}",
                                       description=formatted_des, colour=discord.Colour.random())
-            elif data[self.id]["data"]["is_free"] == True:
-                formatted_des = re.sub("<.*?>", "", data[self.id]["data"]["about_the_game"])
-                embed = discord.Embed(title=f"{data[self.id]['data']['name']}     FREE",
-                                      description=formatted_des, colour=discord.Colour.random())
+                
             embed.set_footer(text="Powered by ANC")
             embed.set_image(url=data[self.id]["data"]["header_image"])
             a = []
+
             for i in data[self.id]["data"]["genres"]:
                 a.append(i["description"])
+                
             formatted_genre = "❖".join(a)
             embed.add_field(name="✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢✢", value=" ", inline=False)
             embed.add_field(name=formatted_genre, value=" ", inline=False)
+
             await interaction.response.edit_message(embed=embed, view=self)
+
         else:
             embed = discord.Embed(title="Sorry 😶‍🌫️", description=f"The data regarding {self.name} could not be found")
             await interaction.response.edit_message(embed=embed, view=self)
