@@ -1,4 +1,4 @@
-import discord, csv, re
+import discord, csv, re , asyncio
 from discord.ext import commands, tasks
 
 from cogs.steam import steam_embed
@@ -25,6 +25,7 @@ class Steam(commands.Cog):
                 list = row[0].strip()
                 serial = row[1]
                 is_game = re.match(r'^[A-Za-z0-9\s-]+$', list) and not any(term in list.lower() for term in except_terms)
+                await asyncio.sleep(0.1)
                 # Search and match the names from database 
                 if is_game and  list.startswith(sar):
                     matching_games.append(list)
