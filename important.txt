@@ -2,7 +2,7 @@ Krack_Z - https://discord.com/api/oauth2/authorize?client_id=1161940642109337641
 Horny_Bobby - https://discord.com/api/oauth2/authorize?client_id=1163501101442670682&permissions=68169720397809&scope=bot 
 Krack_Bhone - https://discord.com/api/oauth2/authorize?client_id=1162031779474063461&permissions=68169451962311&scope=bot
 
-// No longer work
+// No longer works
 v0.3 - https://discord.com/api/oauth2/authorize?client_id=1075090340165464164&permissions=8&scope=bot
 Krack v0.1 - MTA3NDMzNzUxMjMyOTMxNDM5NA.GxPluR.9lRMchX9Frvu-4B6fWJfJ1NTtTh6jKYtG0Xo4g
 Krack v0.2 - MTA3NDMzNzUxMjMyOTMxNDM5NA.GxPluR.9lRMchX9Frvu-4B6fWJfJ1NTtTh6jKYtG0Xo4g
